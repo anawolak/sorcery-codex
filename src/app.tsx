@@ -57,14 +57,81 @@ function TabBar() {
   );
 }
 
+const PENDING_KEY = 'update-pending';
+
 function UpdateToast() {
-  const [show, setShow] = useState(false);
-  useEffect(() => onUpdateAvailable(setShow), []);
-  if (!show) return null;
+  const [state, setState] = useState<'hidden' | 'available' | 'applying' | 'done'>('hidden');
+
+  useEffect(() => {
+    let available = false;
+    const off = onUpdateAvailable((v) => {
+      available = v;
+      if (v) setState((s) => (s === 'applying' ? s : 'available'));
+    });
+    // After the user tapped Update and reopened the app, confirm it worked.
+    let pending = false;
+    try {
+      pending = localStorage.getItem(PENDING_KEY) === '1';
+    } catch {
+      /* ignore */
+    }
+    let t1: number | undefined;
+    let t2: number | undefined;
+    if (pending) {
+      t1 = window.setTimeout(() => {
+        if (available) return;
+        try {
+          localStorage.removeItem(PENDING_KEY);
+        } catch {
+          /* ignore */
+        }
+        setState('done');
+        t2 = window.setTimeout(() => setState((s) => (s === 'done' ? 'hidden' : s)), 3000);
+      }, 2500);
+    }
+    return () => {
+      off();
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, []);
+
+  if (state === 'hidden') return null;
+  if (state === 'done') {
+    return (
+      <div class="toast" role="status">
+        <span>✓ Updated to the latest cards & rulings</span>
+      </div>
+    );
+  }
+  if (state === 'applying') {
+    return (
+      <div class="toast toast-steps" role="status">
+        <div>
+          <strong>Almost done</strong>
+          <span>Close the app (swipe it away from the app switcher) and open it again to finish the update.</span>
+        </div>
+        <button type="button" onClick={() => setState('hidden')}>
+          OK
+        </button>
+      </div>
+    );
+  }
   return (
     <div class="toast" role="status">
       <span>New cards & rulings available</span>
-      <button type="button" onClick={applyUpdate}>
+      <button
+        type="button"
+        onClick={() => {
+          try {
+            localStorage.setItem(PENDING_KEY, '1');
+          } catch {
+            /* ignore */
+          }
+          setState('applying');
+          applyUpdate();
+        }}
+      >
         Update
       </button>
     </div>

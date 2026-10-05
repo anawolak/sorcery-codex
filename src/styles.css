@@ -1525,3 +1525,13 @@ mark {
 .row.has-action:active {
   background: var(--bg-elev);
 }
+.toast-steps > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.toast-steps strong {
+  font-size: 15px;
+}
