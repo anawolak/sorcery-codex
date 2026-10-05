@@ -1,10 +1,3 @@
-/**
- * Tiny hash router with an iOS-style navigation stack:
- *  - history.state.idx tells push from pop, so transitions slide the right way
- *  - scroll position is remembered per history entry
- *  - route changes render synchronously inside document.startViewTransition when available
- */
-
 export type Tab = 'search' | 'cards' | 'codex' | 'rules' | 'more';
 export type NavDir = 'push' | 'pop' | 'tab' | 'none';
 
@@ -74,7 +67,6 @@ export function navigate(path: string, opts: { replace?: boolean; dir?: NavDir }
   apply(opts.dir ?? 'push');
 }
 
-/** Update the URL query of the current entry without re-rendering (e.g. while typing). */
 export function setQueryParam(key: string, value: string) {
   const q = new URLSearchParams(route.query);
   if (value) q.set(key, value);
@@ -111,7 +103,6 @@ export function initRouter() {
     apply(dir);
   });
 
-  // Intercept in-app links so they use pushState navigation.
   document.addEventListener('click', (e) => {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey) return;
     const a = (e.target as Element).closest?.('a[href^="#/"]');

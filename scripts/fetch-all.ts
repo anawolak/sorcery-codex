@@ -1,10 +1,3 @@
-/**
- * Fetches all source data into data/raw/:
- *  - cards.json   from the public card API
- *  - codex.json + faq.json   from the RSC payload of sorcerytcg.com/codex (it embeds the full datasets)
- *  - rules.json   text sections extracted from the official rulebook PDF
- * Then run build-index.ts to produce the app database.
- */
 import fs from 'node:fs';
 import path from 'node:path';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
@@ -34,7 +27,6 @@ async function fetchCodexAndFaq() {
 }
 
 async function downloadDrivePdf(id: string): Promise<Buffer> {
-  // Large files may get an interstitial "can't scan for viruses" page; the usercontent URL with confirm=t skips it.
   const urls = [
     `https://drive.google.com/uc?export=download&id=${id}`,
     `https://drive.usercontent.google.com/download?id=${id}&export=download&confirm=t`,
@@ -43,9 +35,7 @@ async function downloadDrivePdf(id: string): Promise<Buffer> {
     try {
       const buf = Buffer.from(await (await fetchWithRetry(url, 2)).arrayBuffer());
       if (buf.subarray(0, 4).toString() === '%PDF') return buf;
-    } catch {
-      /* try the next URL */
-    }
+    } catch {}
   }
   throw new Error('Rulebook download did not return a PDF');
 }
@@ -61,7 +51,6 @@ async function fetchRulebook() {
     pdfPath = path.join(RAW, 'pdf', `rulebook-${id}.pdf`);
     if (!fs.existsSync(pdfPath)) fs.writeFileSync(pdfPath, await downloadDrivePdf(id));
   } catch (err) {
-    // Fall back to the most recently cached rulebook rather than failing the whole refresh.
     const cached = fs
       .readdirSync(path.join(RAW, 'pdf'))
       .filter((f) => f.endsWith('.pdf'))
@@ -95,7 +84,6 @@ interface RawSection {
   paras: string[];
 }
 
-/** Join items of one visual line, inserting spaces where the PDF only encodes a horizontal gap. */
 function joinLine(items: Item[]): string {
   let out = '';
   let end = -Infinity;
@@ -107,7 +95,6 @@ function joinLine(items: Item[]): string {
   return out.replace(/\s+/g, ' ').trim();
 }
 
-/** Split a line wherever there is a column-sized horizontal gap. */
 function splitSegments(line: Item[]): Item[][] {
   const segs: Item[][] = [];
   let end = -Infinity;
@@ -120,11 +107,6 @@ function splitSegments(line: Item[]): Item[][] {
   return segs;
 }
 
-/**
- * Heuristic layout parse. Chapter titles are >= 30pt; section headings use the dominant 14-29pt
- * heading font; everything else is body. Large digit-only text are diagram callouts and "- n -"
- * are page numbers; both are dropped. Two-column pages are read column by column.
- */
 async function parseRulebook(pdfPath: string): Promise<RawSection[]> {
   const doc = await getDocument({ data: new Uint8Array(fs.readFileSync(pdfPath)), verbosity: 0 }).promise;
   const pages: { items: Item[]; width: number }[] = [];
@@ -169,7 +151,6 @@ async function parseRulebook(pdfPath: string): Promise<RawSection[]> {
     const p = idx + 1;
     if (p === 1 || items.some((i) => /table of contents/i.test(i.str))) return;
 
-    // Group into visual lines, then split lines into column segments.
     items.sort((a, b) => b.y - a.y || a.x - b.x);
     const lines: Item[][] = [];
     for (const it of items) {
@@ -181,7 +162,6 @@ async function parseRulebook(pdfPath: string): Promise<RawSection[]> {
     const mid = width * 0.45;
     const rightBody = segs.filter((s) => s[0].x > mid && s[0].size < 14).length;
     if (rightBody >= 4) {
-      // Two-column page: left column top-to-bottom, then right column.
       segs = [...segs.filter((s) => s[0].x <= mid), ...segs.filter((s) => s[0].x > mid)];
     }
     lastY = Infinity;
@@ -197,7 +177,6 @@ async function parseRulebook(pdfPath: string): Promise<RawSection[]> {
         startSection(text, 0, p);
       } else if (size >= 14 && seg.some((i) => i.font === headingFont && i.size >= 14)) {
         const level = size >= 18 ? 1 : 2;
-        // A heading that wraps onto a second line continues the previous heading.
         if (current && !current.paras.length && !para && lastY - y > 0 && lastY - y < size * 1.6 && current.level === level) {
           current.title += ` ${text}`;
         } else {
@@ -207,7 +186,6 @@ async function parseRulebook(pdfPath: string): Promise<RawSection[]> {
         if (!current) startSection('Introduction', 0, p);
         const gap = Math.abs(lastY - y);
         const newPara = gap > size * 1.9 || /^[•●▪◦]/.test(text) || /^(Step )?\d+\.\s/.test(text);
-        // A short line set entirely in the heading font at body size is an inline sub-heading.
         if ((newPara || !para) && text.length < 48 && !/[.:,]$/.test(text) && seg.every((i) => i.font === headingFont)) {
           flushPara();
           para = `## ${text}`;

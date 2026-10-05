@@ -1,7 +1,3 @@
-/**
- * Downloads every card image into the `card-images` cache (the same cache the service worker
- * serves them from), with observable progress. Runs automatically after first launch.
- */
 import { cardImage, getStore } from './data';
 
 export const IMAGE_CACHE = 'card-images';
@@ -36,9 +32,7 @@ async function refreshStorageInfo() {
     const est = await navigator.storage?.estimate?.();
     const persisted = (await navigator.storage?.persisted?.()) ?? null;
     set({ usage: est?.usage ?? null, persisted });
-  } catch {
-    /* storage API unavailable */
-  }
+  } catch {}
 }
 
 export function downloadAllImages(): Promise<void> {
@@ -52,9 +46,7 @@ export function downloadAllImages(): Promise<void> {
       set({ status: 'checking', failed: 0 });
       try {
         await navigator.storage?.persist?.();
-      } catch {
-        /* best effort */
-      }
+      } catch {}
       const cache = await caches.open(IMAGE_CACHE);
       const urls = getStore().db.cards.map((c) => new URL(cardImage(c), location.href).href);
       const have = new Set((await cache.keys()).map((r) => r.url));
@@ -76,16 +68,13 @@ export function downloadAllImages(): Promise<void> {
       };
       await Promise.all(Array.from({ length: CONCURRENCY }, worker));
 
-      // Drop images of printings no longer used by the current data.
       const keep = new Set(urls);
       for (const req of await cache.keys()) if (!keep.has(req.url)) await cache.delete(req);
 
       set({ status: failed ? 'error' : 'done' });
       try {
         localStorage.setItem('images-version', getStore().db.version);
-      } catch {
-        /* ignore */
-      }
+      } catch {}
     } catch {
       set({ status: 'error' });
     } finally {
@@ -96,18 +85,14 @@ export function downloadAllImages(): Promise<void> {
   return running;
 }
 
-/** Start the download on launch unless this data version was already fully cached. */
 export function autoDownload() {
   refreshStorageInfo();
   let v: string | null = null;
   try {
     v = localStorage.getItem('images-version');
-  } catch {
-    /* ignore */
-  }
+  } catch {}
   const start = () => downloadAllImages();
   if (v === getStore().db.version) {
-    // Still verify quietly (cheap: cache.keys) in case the OS evicted entries.
     setTimeout(start, 4000);
   } else {
     setTimeout(start, 1500);

@@ -39,12 +39,10 @@ export function getStore(): Store {
 export const cardImage = (c: Card) => `cards/${c.img}.webp`;
 export const printingImage = (slug: string) => `${IMAGE_CDN}/${slug}.png`;
 
-/** Source markup: [[Card or Term]], ((codex term)), and ))no-link(( — see scripts/lib.ts. */
 export const MARKUP = /\[\[([^\]]+)\]\]|\(\(([^()]+)\)\)|\)\)([^()]+)\(\(/g;
 
 let termIndex: Map<string, string> | null = null;
 
-/** Resolve a link label to an app route: card name, codex title/alias, or codex sub-section title. */
 export function resolveLink(name: string, preferTerm = false): string | null {
   const s = getStore();
   const key = name.trim().toLowerCase();

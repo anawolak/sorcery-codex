@@ -1,4 +1,3 @@
-/** Inline text run. `x` may contain `[[Card or Term]]` link markup. */
 export interface Span {
   x: string;
   b?: 1;
@@ -28,7 +27,6 @@ export interface Card {
   attack: number | null;
   defense: number | null;
   life: number | null;
-  /** Elemental threshold: air, earth, fire, water. */
   th: [number, number, number, number];
   elements: string[];
   subtypes: string[];
@@ -37,14 +35,10 @@ export interface Card {
   flavor: string | null;
   artist: string | null;
   sets: string[];
-  /** Printing slug of the image cached for offline use. */
   img: string;
   printings: Printing[];
-  /** Related codex entry ids, most specific first. */
   terms: string[];
-  /** FAQ ids about this card. */
   faqs: string[];
-  /** FAQ ids about other cards that mention this card. */
   mentions: string[];
 }
 
@@ -61,14 +55,11 @@ export interface CodexEntry {
   blocks: Block[];
   subs: CodexSub[];
   updated: string;
-  /** Card slugs whose rules text uses this term (capped). */
   cards: string[];
   cardCount: number;
   faqs: string[];
   rules: string[];
-  /** Other codex entries referenced from this entry. */
   see: string[];
-  /** Too common to be a useful suggestion on its own (e.g. "Minion", "May and Can"). */
   generic?: 1;
 }
 
@@ -78,7 +69,6 @@ export interface Faq {
   a: Block[];
   cards: string[];
   terms: string[];
-  /** Cards linked from within the answer. */
   refs: string[];
   updated: string;
 }

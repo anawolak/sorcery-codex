@@ -1,8 +1,3 @@
-/**
- * Downloads the primary printing image of every card and stores it as a compact WebP in
- * public/cards/<printing-slug>.webp so the whole card library can be cached offline.
- * Existing files are skipped; images no longer referenced are removed.
- */
 import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';

@@ -1,7 +1,6 @@
 import { type Pin, isPinned, togglePin, usePins } from '../pins';
 import { PinIcon } from './Icons';
 
-/** Toggle for pinning the current page (or a search) to the Search home. */
 export function PinButton({ pin, size = 22, class: cls = 'nav-icon' }: { pin: Pin; size?: number; class?: string }) {
   usePins();
   const on = isPinned(pin.kind, pin.key);

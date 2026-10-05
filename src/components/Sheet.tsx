@@ -6,7 +6,6 @@ import { RichText } from './RichText';
 
 let setTermId: ((id: string | null) => void) | null = null;
 
-/** Quick definition peek, e.g. when tapping a keyword in card text mid-game. */
 export function openTermSheet(id: string) {
   setTermId?.(id);
 }

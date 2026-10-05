@@ -1,7 +1,3 @@
-/**
- * Generates app icons and iOS launch images from one SVG sigil, and writes the
- * apple-touch-startup-image links into index.html between the SPLASH markers.
- */
 import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
@@ -14,7 +10,6 @@ function sigil(size: number, { rounded = true, pad = 0 } = {}): string {
   const s = 512;
   const r = 150 - pad;
   const c = s / 2;
-  // Four-pointed star: long cardinal points, short diagonal waists.
   const star = (R: number, w: number) => {
     const pts: string[] = [];
     for (let i = 0; i < 8; i++) {
@@ -41,23 +36,21 @@ ensureDir(SPLASH);
 fs.writeFileSync(path.join(ICONS, 'icon.svg'), sigil(512));
 await sharp(Buffer.from(sigil(512))).png().toFile(path.join(ICONS, 'icon-512.png'));
 await sharp(Buffer.from(sigil(192))).png().toFile(path.join(ICONS, 'icon-192.png'));
-// iOS applies its own rounding mask, so the touch icon is a full-bleed square.
 await sharp(Buffer.from(sigil(180, { rounded: false }))).png().toFile(path.join(ICONS, 'apple-touch-icon.png'));
 await sharp(Buffer.from(sigil(512, { rounded: false, pad: 40 }))).png().toFile(path.join(ICONS, 'maskable-512.png'));
 
-// Portrait iPhone viewports (CSS px) and device pixel ratio.
 const DEVICES: [number, number, number][] = [
-  [440, 956, 3], // 16/17 Pro Max
-  [420, 912, 3], // Air
-  [402, 874, 3], // 16/17 Pro, 17
-  [430, 932, 3], // 14/15 Pro Max, 15/16 Plus
-  [393, 852, 3], // 14 Pro, 15, 16
-  [428, 926, 3], // 12/13 Pro Max, 14 Plus
-  [390, 844, 3], // 12/13/14, 16e
-  [375, 812, 3], // X, XS, 11 Pro, 12/13 mini
-  [414, 896, 3], // XS Max, 11 Pro Max
-  [414, 896, 2], // XR, 11
-  [375, 667, 2], // SE
+  [440, 956, 3],
+  [420, 912, 3],
+  [402, 874, 3],
+  [430, 932, 3],
+  [393, 852, 3],
+  [428, 926, 3],
+  [390, 844, 3],
+  [375, 812, 3],
+  [414, 896, 3],
+  [414, 896, 2],
+  [375, 667, 2],
 ];
 
 const links: string[] = [];

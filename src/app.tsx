@@ -68,13 +68,10 @@ function UpdateToast() {
       available = v;
       if (v) setState((s) => (s === 'applying' ? s : 'available'));
     });
-    // After the user tapped Update and reopened the app, confirm it worked.
     let pending = false;
     try {
       pending = localStorage.getItem(PENDING_KEY) === '1';
-    } catch {
-      /* ignore */
-    }
+    } catch {}
     let t1: number | undefined;
     let t2: number | undefined;
     if (pending) {
@@ -82,9 +79,7 @@ function UpdateToast() {
         if (available) return;
         try {
           localStorage.removeItem(PENDING_KEY);
-        } catch {
-          /* ignore */
-        }
+        } catch {}
         setState('done');
         t2 = window.setTimeout(() => setState((s) => (s === 'done' ? 'hidden' : s)), 3000);
       }, 2500);
@@ -125,9 +120,7 @@ function UpdateToast() {
         onClick={() => {
           try {
             localStorage.setItem(PENDING_KEY, '1');
-          } catch {
-            /* ignore */
-          }
+          } catch {}
           setState('applying');
           applyUpdate();
         }}
@@ -138,10 +131,6 @@ function UpdateToast() {
   );
 }
 
-/**
- * Standalone home-screen apps get no Safari back-swipe, so recreate it:
- * dragging from the left edge slides the current page away and pops the stack.
- */
 function useEdgeSwipeBack() {
   useEffect(() => {
     let startX = 0;

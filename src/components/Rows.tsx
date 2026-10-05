@@ -66,7 +66,6 @@ export function RuleRow({ rule }: { rule: RuleSection }) {
   return <LinkRow href={`/rule/${rule.id}`} title={rule.title} sub={`${rule.chapter !== rule.title ? `${rule.chapter} · ` : ''}p. ${rule.page}`} icon={<span class="pill">§</span>} />;
 }
 
-/** Expandable FAQ entry: question always visible, answer inline on tap. */
 export function FaqItem({ faq, open: initial = false, showCards = true }: { faq: Faq; open?: boolean; showCards?: boolean }) {
   const [open, setOpen] = useState(initial);
   const s = getStore();

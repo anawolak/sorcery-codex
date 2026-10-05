@@ -1,7 +1,3 @@
-/**
- * Normalizes data/raw/* into public/data/db.json and precomputes the relationship graph
- * (card ↔ codex term ↔ FAQ ↔ rulebook section) that powers "Related" suggestions.
- */
 import crypto from 'node:crypto';
 import path from 'node:path';
 import type { Card, CodexEntry, DB, Faq, Printing, RuleSection } from '../src/types';
@@ -16,8 +12,6 @@ const rawCards = readJson<any[]>(path.join(RAW, 'cards.json'));
 const rawCodex = readJson<any[]>(path.join(RAW, 'codex.json'));
 const rawFaq = readJson<any[]>(path.join(RAW, 'faq.json'));
 const rawRules = readJson<{ sections: any[] }>(path.join(RAW, 'rules.json'));
-
-// ---------- Cards ----------
 
 const PRODUCT_RANK: Record<string, number> = { Booster: 0, PreconstructedDeck: 1, BoxTopper: 2 };
 
@@ -72,8 +66,6 @@ cards.sort((a, b) => a.name.localeCompare(b.name));
 const cardByName = new Map(cards.map((c) => [c.name.toLowerCase(), c]));
 const cardBySlug = new Map(cards.map((c) => [c.slug, c]));
 
-// ---------- Codex ----------
-
 const codex: CodexEntry[] = rawCodex.map((x) => {
   const aliases = new Set<string>([x.title.toLowerCase()]);
   for (const a of String(x.finder ?? '').split(',')) if (a.trim()) aliases.add(a.trim().toLowerCase());
@@ -89,14 +81,11 @@ const codex: CodexEntry[] = rawCodex.map((x) => {
     faqs: [],
     rules: [],
     see: [],
-    // Kept only during the build.
     ...({ _link: x.interlinking !== false } as object),
   } as CodexEntry;
 });
 codex.sort((a, b) => a.title.localeCompare(b.title));
 const codexByTitle = new Map(codex.map((c) => [c.title.toLowerCase(), c]));
-
-// ---------- Term matcher ----------
 
 interface Alias {
   re: RegExp;
@@ -114,7 +103,6 @@ const aliases: Alias[] = codex
   )
   .sort((a, b) => b.len - a.len);
 
-/** Codex ids mentioned in text, longest alias first so "activated ability" beats "ability". Returns id → count. */
 function findTerms(text: string): Map<string, number> {
   const taken: boolean[] = [];
   const found = new Map<string, number>();
@@ -135,8 +123,6 @@ function findTerms(text: string): Map<string, number> {
 function linkRefs(text: string): string[] {
   return [...text.matchAll(MARKUP)].flatMap((m) => (m[1] ?? m[2] ? [(m[1] ?? m[2]).trim().toLowerCase()] : []));
 }
-
-// ---------- FAQ ----------
 
 const faqs: Faq[] = [...rawFaq]
   .sort((a, b) => String(a.orderRank ?? '').localeCompare(String(b.orderRank ?? '')))
@@ -159,13 +145,10 @@ const faqs: Faq[] = [...rawFaq]
     };
   });
 
-// ---------- Rulebook ----------
-
 const rules: RuleSection[] = [];
 for (const s of rawRules.sections) {
   if (/glossary|quick reference/i.test(s.chapter)) continue;
   const prev = rules[rules.length - 1];
-  // Diagram labels occasionally parse as headings; fold them into the previous section.
   if (prev && (s.title.replace(/[^a-z]/gi, '').length < 3 || !s.paras.length) && s.level > 0) {
     prev.paras.push(...s.paras);
     continue;
@@ -173,9 +156,6 @@ for (const s of rawRules.sections) {
   rules.push({ id: s.id, chapter: s.chapter, title: s.title, page: s.page, paras: s.paras, terms: [] });
 }
 
-// ---------- Relationships ----------
-
-// Inverse document frequency over cards, so rarer (more specific) terms rank first.
 const cardTermHits = new Map<string, Map<string, number>>();
 const df = new Map<string, number>();
 for (const c of cards) {
@@ -215,7 +195,6 @@ for (const f of faqs) {
   for (const s of f.refs) cardBySlug.get(s)!.mentions.push(f.id);
 }
 
-// Codex → FAQ: rank FAQs where the term appears in the question above those where it is only in the answer.
 for (const e of codex) {
   const scored: [string, number][] = [];
   for (const f of faqs) {
@@ -246,12 +225,8 @@ for (const e of codex) {
   delete (e as any)._link;
 }
 
-// ---------- Write ----------
-
 const body = { cards, codex, faqs, rules };
 const version = crypto.createHash('sha1').update(JSON.stringify(body)).digest('hex').slice(0, 10);
-// Deterministic "data as of" date (latest Codex/FAQ edit) so identical data yields an identical file
-// and the service worker doesn't announce an update after every daily build.
 const generated = [...codex.map((c) => c.updated), ...faqs.map((f) => f.updated)].sort().at(-1) ?? '';
 const db: DB = { version, generated, ...body };
 writeJson(path.join(OUT, 'db.json'), db);

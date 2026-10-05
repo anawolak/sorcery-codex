@@ -49,7 +49,6 @@ export function SearchView() {
     window.scrollTo(0, 0);
   };
 
-  // Remember the query when the user opens something from the results.
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       if ((e.target as Element).closest?.('.results a, .related a, .related .faq-q')) addRecent(q);
@@ -58,7 +57,6 @@ export function SearchView() {
     return () => document.removeEventListener('click', onClick, true);
   }, [q]);
 
-  // iOS-like: scrolling the results dismisses the keyboard.
   useEffect(() => {
     const onTouch = (e: TouchEvent) => {
       if (document.activeElement === input.current && !(e.target as Element).closest('.searchbar')) input.current?.blur();
@@ -270,7 +268,6 @@ function Empty({ q }: { q: string }) {
   );
 }
 
-/** Smart suggestions: what the query is about, the definition, and the FAQ that answer it. */
 function RelatedPanel({ rel }: { rel: Related }) {
   return (
     <section class="related">
@@ -349,7 +346,6 @@ function ResultRow({ hit }: { hit: Hit }) {
 function Grouped({ hits, onMore }: { hits: Hit[]; onMore: (t: DocType) => void }) {
   const groups: Record<DocType, Hit[]> = { card: [], codex: [], faq: [], rule: [] };
   for (const h of hits) groups[h.doc.type].push(h);
-  // Order groups by their best hit so the most relevant kind of answer comes first.
   const order = (Object.keys(groups) as DocType[]).filter((t) => groups[t].length).sort((a, b) => groups[b][0].score - groups[a][0].score);
   return (
     <>

@@ -4,7 +4,6 @@ import { normalize } from '../search/engine';
 import type { Block, Span } from '../types';
 import { openTermSheet } from './Sheet';
 
-/** Turns source link markup into links to cards / codex entries (see MARKUP). */
 function linkify(text: string, key: string): ComponentChildren[] {
   const out: ComponentChildren[] = [];
   let last = 0;
@@ -91,13 +90,8 @@ function aliasRegex(ids: string[]): RegExp | null {
   return re;
 }
 
-/**
- * Plain text (card rules, rulebook paragraphs) with the given codex terms made tappable.
- * `once` links only the first occurrence of each term (for long prose).
- */
 export function TermText({ text, terms, once = false, seen }: { text: string; terms: string[]; once?: boolean; seen?: Set<string> }) {
   const s = getStore();
-  // Generic terms ("minion", "site") would underline half of every sentence.
   terms = terms.filter((id) => !s.codex.get(id)?.generic);
   const re = aliasRegex(terms);
   if (!re) return <>{text}</>;

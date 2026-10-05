@@ -16,7 +16,6 @@ export function useScrolled(threshold = 44) {
   return scrolled;
 }
 
-/** Compact iOS navigation bar for pushed pages; the title fades in once the large title scrolls away. */
 export function NavBar({ title, right }: { title: string; right?: ComponentChildren }) {
   const scrolled = useScrolled(56);
   return (
@@ -31,7 +30,6 @@ export function NavBar({ title, right }: { title: string; right?: ComponentChild
   );
 }
 
-/** Large title header for tab root pages. */
 export function LargeTitle({ title, children }: { title: string; children?: ComponentChildren }) {
   const scrolled = useScrolled(40);
   return (

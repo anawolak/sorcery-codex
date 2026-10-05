@@ -20,7 +20,6 @@ async function boot() {
   }
   initSearch();
   initRouter();
-  // Synchronous top-level render so view transitions capture the new page in their callback.
   onRouteChange(() => render(<App />, root));
   render(<App />, root);
   document.documentElement.classList.add('ready');

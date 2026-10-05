@@ -16,7 +16,6 @@ interface Filters {
   sort: 'name' | 'cost';
 }
 
-// Module-level so filters survive navigating into a card and back.
 let saved: Filters = { text: '', elements: [], type: '', set: '', sort: 'name' };
 
 const EL_INDEX: Record<Element, number> = { air: 0, earth: 1, fire: 2, water: 3 };

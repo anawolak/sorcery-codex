@@ -1,10 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { CloseIcon } from './Icons';
 
-/**
- * Fullscreen card image with pinch-to-zoom, pan, double-tap zoom and swipe-down to close.
- * Shows the offline image immediately and swaps in the high-resolution original when online.
- */
 export function ImageViewer({ src, hiRes, alt, onClose }: { src: string; hiRes?: string; alt: string; onClose: () => void }) {
   const img = useRef<HTMLImageElement>(null);
   const [current, setCurrent] = useState(src);

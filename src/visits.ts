@@ -1,11 +1,5 @@
-/**
- * Visit counter via GoatCounter (no cookies, no consent banner).
- * One visit = an app launch, or coming back to the app after 30+ minutes away.
- * Visits made offline are remembered and sent when the connection returns.
- */
 import { useEffect, useState } from 'preact/hooks';
 
-/** GoatCounter site code, i.e. the "xyz" in https://xyz.goatcounter.com. Empty disables counting. */
 export const GOATCOUNTER_CODE = 'anawolak';
 
 const SESSION_GAP_MS = 30 * 60 * 1000;
@@ -27,9 +21,7 @@ function set(key: string, value: string | null) {
   try {
     if (value == null) localStorage.removeItem(key);
     else localStorage.setItem(key, value);
-  } catch {
-    /* ignore */
-  }
+  } catch {}
 }
 
 function send() {
@@ -53,7 +45,6 @@ export function initVisits() {
   maybeCount();
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') maybeCount();
-    // Keep "last seen" fresh while the app is open, so a long session isn't counted twice.
     else set(LAST_KEY, String(Date.now()));
   });
   window.addEventListener('online', () => get(PENDING_KEY) && send());
@@ -61,11 +52,9 @@ export function initVisits() {
 
 export interface VisitTotal {
   count: string;
-  /** ISO time the value was fetched; shown when offline. */
   at: string;
 }
 
-/** Total visits from GoatCounter's public counter, cached for offline display. */
 export function useVisitTotal(): VisitTotal | null {
   const [total, setTotal] = useState<VisitTotal | null>(() => {
     try {

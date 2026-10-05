@@ -29,7 +29,6 @@ export const ShareIcon = (p: P) => base(p, [<path d="M12 3v12" />, <path d="m7 8
 export type Element = 'air' | 'earth' | 'fire' | 'water';
 export const ELEMENTS: Element[] = ['air', 'earth', 'fire', 'water'];
 
-/** Alchemical element glyphs, as used on Sorcery cards. */
 export function ElementGlyph({ el, size = 14 }: { el: Element; size?: number }) {
   const up = el === 'air' || el === 'fire';
   const bar = el === 'air' || el === 'earth';
@@ -44,7 +43,6 @@ export function ElementGlyph({ el, size = 14 }: { el: Element; size?: number }) 
 export const PinIcon = ({ filled, ...p }: P & { filled?: boolean }) =>
   base({ fill: filled ? 'currentColor' : 'none', ...p }, [<path d="M9 3h6l-1 6 4 4v2h-5v6l-1 1-1-1v-6H6v-2l4-4z" />]);
 
-/** The app sigil (same as the home-screen icon), sized in em so it scales with the text beside it. */
 export function AppLogo() {
   const star = Array.from({ length: 8 }, (_, i) => {
     const a = ((-90 + i * 45) * Math.PI) / 180;

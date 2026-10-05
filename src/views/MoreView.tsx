@@ -15,7 +15,6 @@ function useOffline(): OfflineState {
 
 const mb = (n: number | null) => (n == null ? '—' : `${(n / 1e6).toFixed(0)} MB`);
 
-/** Compact progress shown on the search home while images are downloading. */
 export function OfflinePill() {
   const s = useOffline();
   if (s.status !== 'downloading' && s.status !== 'checking') return null;
@@ -42,9 +41,7 @@ function setTheme(t: Theme) {
   try {
     if (t === 'system') localStorage.removeItem('theme');
     else localStorage.setItem('theme', t);
-  } catch {
-    /* ignore */
-  }
+  } catch {}
   if (t === 'system') delete document.documentElement.dataset.theme;
   else document.documentElement.dataset.theme = t;
 }

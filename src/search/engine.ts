@@ -6,12 +6,10 @@ export type DocType = 'card' | 'codex' | 'faq' | 'rule';
 export interface Doc {
   id: string;
   type: DocType;
-  /** Route to open, e.g. /card/apprentice_wizard */
   href: string;
   title: string;
   kw: string;
   body: string;
-  /** Short label shown under the title (type line, chapter, …). */
   sub: string;
 }
 
@@ -143,7 +141,6 @@ export function getDoc(id: string): Doc | undefined {
   return docs.get(id);
 }
 
-/** Text excerpt around the first matched term, for result rows. */
 export function snippet(body: string, terms: string[], max = 140): string {
   const flat = body.replace(/\s+/g, ' ').trim();
   if (flat.length <= max) return flat;

@@ -17,7 +17,6 @@ export function initPwa() {
       registration = reg;
     },
   });
-  // Home-screen apps are rarely reloaded; look for new data whenever the app comes back to the foreground.
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible' && navigator.onLine) registration?.update().catch(() => {});
   });

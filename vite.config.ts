@@ -3,7 +3,6 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  // Relative base + hash routing: works at any path, e.g. https://<user>.github.io/<repo>/
   base: './',
   plugins: [
     preact(),
@@ -30,12 +29,10 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,json}'],
-        // Card images are cached by the app's own downloader (src/offline.ts) with progress UI.
         globIgnores: ['cards/**', 'splash/**'],
         maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,
-        // Take control on first install so the very first session already works offline.
         clientsClaim: true,
         runtimeCaching: [
           {

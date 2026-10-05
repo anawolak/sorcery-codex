@@ -38,7 +38,6 @@ export async function fetchWithRetry(url: string, tries = 4): Promise<Response> 
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/** Concatenate the Next.js RSC flight chunks embedded in a server-rendered page. */
 export function extractRscPayload(html: string): string {
   const re = /self\.__next_f\.push\(\[1,"((?:[^"\\]|\\.)*)"\]\)/g;
   let out = '';
@@ -46,7 +45,6 @@ export function extractRscPayload(html: string): string {
   return out;
 }
 
-/** Find every `{"json":[...]}` dataset in the payload, keyed by the `_type` of its items. */
 export function extractDatasets(payload: string): Record<string, any[]> {
   const sets: Record<string, any[]> = {};
   const marker = '{"json":[';
@@ -61,9 +59,7 @@ export function extractDatasets(payload: string): Record<string, any[]> {
       const arr = JSON.parse(payload.slice(start, end + 1)).json;
       const type = arr?.[0]?._type;
       if (type && (!sets[type] || sets[type].length < arr.length)) sets[type] = arr;
-    } catch {
-      /* not a complete dataset */
-    }
+    } catch {}
   }
   return sets;
 }
@@ -86,7 +82,6 @@ function matchingBrace(s: string, start: number): number {
   return -1;
 }
 
-/** Convert Sanity portable text to the app's compact block format. */
 export function portableToBlocks(pt: any[] | undefined): Block[] {
   const blocks: Block[] = [];
   for (const b of pt ?? []) {
@@ -120,11 +115,6 @@ export function blocksToText(blocks: Block[]): string {
     .replace(MARKUP, (_m, a, b, c) => a ?? b ?? c);
 }
 
-/**
- * Inline markup used in the source CMS: [[Card or Term]] links, ((term)) explicit codex links,
- * and ))text(( which suppresses auto-linking. Alternation order + left-to-right scanning keeps
- * "((a)) and ((b))" from being read as ")) and ((".
- */
 export const MARKUP = /\[\[([^\]]+)\]\]|\(\(([^()]+)\)\)|\)\)([^()]+)\(\(/g;
 
 export function slugify(s: string): string {
