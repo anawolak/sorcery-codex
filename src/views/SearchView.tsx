@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
-import { CloseIcon, ClockIcon, SearchIcon, ShareIcon, SparkIcon } from '../components/Icons';
+import { CloseIcon, ClockIcon, PinIcon, SearchIcon, ShareIcon, SparkIcon } from '../components/Icons';
+import { PinButton } from '../components/PinButton';
 import { useScrolled } from '../components/NavBar';
 import { CardRow, CardThumb, FaqItem, Group, Highlight, LinkRow, RuleRow, TermChips } from '../components/Rows';
 import { OfflinePill } from './MoreView';
 import { firstParagraph, getStore } from '../data';
+import { type Pin, addRecent, clearRecent, usePins } from '../pins';
 import { currentRoute, setQueryParam } from '../router';
 import { type DocType, type Hit, search, snippet } from '../search/engine';
 import { type Related, related } from '../search/suggest';
@@ -19,25 +21,6 @@ const GROUP_LIMIT: Record<DocType, number> = { card: 6, codex: 5, faq: 5, rule: 
 const GROUP_TITLE: Record<DocType, string> = { card: 'Cards', codex: 'Codex', faq: 'FAQ', rule: 'Rulebook' };
 const EXAMPLES = ['Airborne', 'Can a Lance unit attack sites?', "Death's Door", 'Crave Golem', 'Stealth intercept', 'Summoning sickness'];
 
-const RECENT_KEY = 'recent-searches';
-function loadRecent(): string[] {
-  try {
-    return JSON.parse(localStorage.getItem(RECENT_KEY) ?? '[]');
-  } catch {
-    return [];
-  }
-}
-function saveRecent(q: string) {
-  const t = q.trim();
-  if (t.length < 2) return;
-  const list = [t, ...loadRecent().filter((x) => x.toLowerCase() !== t.toLowerCase())].slice(0, 8);
-  try {
-    localStorage.setItem(RECENT_KEY, JSON.stringify(list));
-  } catch {
-    /* ignore */
-  }
-}
-
 const isStandalone = () => (navigator as Navigator & { standalone?: boolean }).standalone === true || matchMedia('(display-mode: standalone)').matches;
 
 export function SearchView() {
@@ -45,7 +28,6 @@ export function SearchView() {
   const [q, setQ] = useState(route.query.get('q') ?? '');
   const [filter, setFilter] = useState<DocType | 'all'>((route.query.get('f') as DocType) || 'all');
   const [focused, setFocused] = useState(false);
-  const [recent, setRecent] = useState(loadRecent);
   const input = useRef<HTMLInputElement>(null);
   const scrolled = useScrolled(8);
 
@@ -70,7 +52,7 @@ export function SearchView() {
   // Remember the query when the user opens something from the results.
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      if ((e.target as Element).closest?.('.results a, .related a, .related .faq-q')) saveRecent(q);
+      if ((e.target as Element).closest?.('.results a, .related a, .related .faq-q')) addRecent(q);
     };
     document.addEventListener('click', onClick, true);
     return () => document.removeEventListener('click', onClick, true);
@@ -96,7 +78,7 @@ export function SearchView() {
           role="search"
           onSubmit={(e) => {
             e.preventDefault();
-            saveRecent(q);
+            addRecent(q);
             input.current?.blur();
           }}
         >
@@ -161,21 +143,10 @@ export function SearchView() {
       </div>
 
       {!active ? (
-        <Home
-          recent={recent}
-          onPick={(t) => {
+        <Home onPick={(t) => {
             update(t);
-            saveRecent(t);
-          }}
-          onClearRecent={() => {
-            try {
-              localStorage.removeItem(RECENT_KEY);
-            } catch {
-              /* ignore */
-            }
-            setRecent([]);
-          }}
-        />
+            addRecent(t);
+          }} />
       ) : (
         <div class="results">
           {filter === 'all' && rel && <RelatedPanel rel={rel} />}
@@ -187,8 +158,9 @@ export function SearchView() {
   );
 }
 
-function Home({ recent, onPick, onClearRecent }: { recent: string[]; onPick: (q: string) => void; onClearRecent: () => void }) {
+function Home({ onPick }: { onPick: (q: string) => void }) {
   const s = getStore();
+  const { pins, recent } = usePins();
   return (
     <div class="home">
       <OfflinePill />
@@ -200,24 +172,34 @@ function Home({ recent, onPick, onClearRecent }: { recent: string[]; onPick: (q:
           </span>
         </div>
       )}
+      {pins.length > 0 && (
+        <Group title="Pinned">
+          {pins.map((p) => (
+            <PinnedRow key={`${p.kind}:${p.key}`} pin={p} onPick={onPick} />
+          ))}
+        </Group>
+      )}
       {recent.length > 0 && (
         <Group
           title="Recent"
           action={
-            <button type="button" class="link-btn" onClick={onClearRecent}>
+            <button type="button" class="link-btn" onClick={clearRecent}>
               Clear
             </button>
           }
         >
           {recent.map((r) => (
-            <button key={r} type="button" class="row" onClick={() => onPick(r)}>
-              <span class="row-icon">
-                <ClockIcon width={16} height={16} />
-              </span>
-              <div class="row-main">
-                <div class="row-title">{r}</div>
-              </div>
-            </button>
+            <div key={r} class="row has-action">
+              <button type="button" class="row-hit" onClick={() => onPick(r)}>
+                <span class="row-icon">
+                  <ClockIcon width={16} height={16} />
+                </span>
+                <div class="row-main">
+                  <div class="row-title">{r}</div>
+                </div>
+              </button>
+              <PinButton pin={{ kind: 'query', key: r, title: r }} size={18} class="row-pin" />
+            </div>
           ))}
         </Group>
       )}
@@ -235,6 +217,43 @@ function Home({ recent, onPick, onClearRecent }: { recent: string[]; onPick: (q:
         <LinkRow href="/codex" title="Codex" sub={`${s.db.codex.length} entries & ${s.db.faqs.length} FAQ`} icon={<span class="pill">X</span>} />
         <LinkRow href="/rules" title="Rulebook" sub={`${s.db.rules.length} sections`} icon={<span class="pill">§</span>} />
       </Group>
+    </div>
+  );
+}
+
+const PIN_LABEL: Record<Pin['kind'], string> = { query: 'Search', card: 'Card', codex: 'Codex', faq: 'FAQ', rule: 'Rulebook' };
+
+function PinnedRow({ pin, onPick }: { pin: Pin; onPick: (q: string) => void }) {
+  const s = getStore();
+  const card = pin.kind === 'card' ? s.cards.get(pin.key.split('/')[2]) : undefined;
+  const icon = card ? (
+    <CardThumb card={card} />
+  ) : (
+    <span class="row-icon">{pin.kind === 'query' ? <PinIcon width={16} height={16} /> : <span class="pill">{pin.kind === 'rule' ? '§' : pin.kind === 'faq' ? 'Q' : 'X'}</span>}</span>
+  );
+  const body = (
+    <>
+      {icon}
+      <div class="row-main">
+        <div class="row-title">
+          <span>{pin.title}</span>
+        </div>
+        <div class="row-sub">{PIN_LABEL[pin.kind]}</div>
+      </div>
+    </>
+  );
+  return (
+    <div class="row has-action">
+      {pin.kind === 'query' ? (
+        <button type="button" class="row-hit" onClick={() => onPick(pin.key)}>
+          {body}
+        </button>
+      ) : (
+        <a class="row-hit" href={`#${pin.key}`}>
+          {body}
+        </a>
+      )}
+      <PinButton pin={pin} size={18} class="row-pin" />
     </div>
   );
 }

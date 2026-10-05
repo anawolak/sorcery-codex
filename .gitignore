@@ -4,3 +4,5 @@ dist
 data/raw
 public/data
 public/cards
+.claude
+.DS_Store

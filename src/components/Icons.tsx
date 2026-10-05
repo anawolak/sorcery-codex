@@ -40,3 +40,6 @@ export function ElementGlyph({ el, size = 14 }: { el: Element; size?: number }) 
     </svg>
   );
 }
+
+export const PinIcon = ({ filled, ...p }: P & { filled?: boolean }) =>
+  base({ fill: filled ? 'currentColor' : 'none', ...p }, [<path d="M9 3h6l-1 6 4 4v2h-5v6l-1 1-1-1v-6H6v-2l4-4z" />]);

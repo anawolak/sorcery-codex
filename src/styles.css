@@ -1481,3 +1481,47 @@ mark {
     transition: none !important;
   }
 }
+
+/* ---------- Pins ---------- */
+.nav-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+}
+.nav-icon:active,
+.row-pin:active {
+  opacity: 0.5;
+}
+.row.has-action {
+  padding: 0;
+  gap: 0;
+}
+.row-hit {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 9px 4px 9px 12px;
+  text-align: left;
+}
+.row-hit:active {
+  background: var(--bg-press);
+}
+.row-pin {
+  flex: none;
+  width: 48px;
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  color: var(--text-3);
+}
+.row-pin.on {
+  color: var(--accent);
+}
+.row.has-action:active {
+  background: var(--bg-elev);
+}

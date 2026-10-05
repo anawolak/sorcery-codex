@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
+import { PinButton } from '../components/PinButton';
 import { LargeTitle, NavBar } from '../components/NavBar';
 import { CardStrip, FaqItem, Group, LinkRow, RuleRow, TermChips } from '../components/Rows';
 import { RichText } from '../components/RichText';
@@ -25,7 +26,7 @@ export function CodexEntryView({ id, sub }: { id: string; sub?: string }) {
 
   return (
     <div class="page detail">
-      <NavBar title={entry.title} />
+      <NavBar title={entry.title} right={<PinButton pin={{ kind: 'codex', key: `/codex/${entry.id}`, title: entry.title }} />} />
       <article class="article">
         <span class="eyebrow">Codex</span>
         <h1 class="serif">{entry.title}</h1>
@@ -146,7 +147,7 @@ export function FaqView({ id }: { id: string }) {
   const cards = [...faq.cards, ...faq.refs];
   return (
     <div class="page detail">
-      <NavBar title="FAQ" />
+      <NavBar title="FAQ" right={<PinButton pin={{ kind: 'faq', key: `/faq/${faq.id}`, title: faq.q }} />} />
       <article class="article">
         <span class="eyebrow">FAQ</span>
         <h1 class="serif faq-title">{faq.q}</h1>

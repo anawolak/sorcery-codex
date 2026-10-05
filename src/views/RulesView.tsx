@@ -1,3 +1,4 @@
+import { PinButton } from '../components/PinButton';
 import { LargeTitle, NavBar } from '../components/NavBar';
 import { Group, LinkRow, TermChips } from '../components/Rows';
 import { TermText } from '../components/RichText';
@@ -38,7 +39,7 @@ export function RuleView({ id }: { id: string }) {
   const seen = new Set<string>();
   return (
     <div class="page detail">
-      <NavBar title={rule.title} />
+      <NavBar title={rule.title} right={<PinButton pin={{ kind: 'rule', key: `/rule/${rule.id}`, title: rule.title }} />} />
       <article class="article">
         <span class="eyebrow">
           {rule.chapter !== rule.title ? `${rule.chapter} · ` : ''}Page {rule.page}

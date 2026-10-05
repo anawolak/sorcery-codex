@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
 import { ExternalIcon } from '../components/Icons';
 import { ImageViewer } from '../components/ImageViewer';
+import { PinButton } from '../components/PinButton';
 import { NavBar } from '../components/NavBar';
 import { CostBadge, FaqItem, Group, TermChips, Threshold } from '../components/Rows';
 import { TermText } from '../components/RichText';
@@ -61,7 +62,7 @@ export function CardView({ slug }: { slug: string }) {
 
   return (
     <div class="page detail">
-      <NavBar title={card.name} />
+      <NavBar title={card.name} right={<PinButton pin={{ kind: 'card', key: `/card/${card.slug}`, title: card.name }} />} />
       <div class="card-hero">
         <button type="button" class="hero-img" onClick={() => setViewer({ src: cardImage(card), hi: printingImage(card.img) })} aria-label="View full size">
           <img src={cardImage(card)} alt={card.name} decoding="async" />
