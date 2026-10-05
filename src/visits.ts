@@ -7,7 +7,9 @@ const LAST_KEY = 'visit-last';
 const PENDING_KEY = 'visit-pending';
 const TOTAL_KEY = 'visit-total';
 
-const enabled = () => !!GOATCOUNTER_CODE && !/^(localhost|127\.|\[::1\])/.test(location.hostname);
+export const COUNTED_HOST = 'sorcery.anastory.com';
+
+const enabled = () => !!GOATCOUNTER_CODE && location.hostname === COUNTED_HOST;
 const base = () => `https://${GOATCOUNTER_CODE}.goatcounter.com`;
 
 function get(key: string): string | null {
