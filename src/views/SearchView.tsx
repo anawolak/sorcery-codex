@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
-import { CloseIcon, ClockIcon, PinIcon, SearchIcon, ShareIcon, SparkIcon } from '../components/Icons';
+import { AppLogo, CloseIcon, ClockIcon, PinIcon, SearchIcon, ShareIcon, SparkIcon } from '../components/Icons';
 import { PinButton } from '../components/PinButton';
 import { useScrolled } from '../components/NavBar';
 import { CardRow, CardThumb, FaqItem, Group, Highlight, LinkRow, RuleRow, TermChips } from '../components/Rows';
@@ -72,7 +72,10 @@ export function SearchView() {
   return (
     <div class="page search-page">
       <div class={`search-head${scrolled || active ? ' scrolled' : ''}${focused || active ? ' compact' : ''}`}>
-        <h1 class="serif search-title">Codex</h1>
+        <h1 class="serif search-title">
+          <AppLogo />
+          <span>Sorcery TCG Codex</span>
+        </h1>
         <form
           class="searchbar"
           role="search"

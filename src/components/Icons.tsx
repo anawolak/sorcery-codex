@@ -43,3 +43,19 @@ export function ElementGlyph({ el, size = 14 }: { el: Element; size?: number }) 
 
 export const PinIcon = ({ filled, ...p }: P & { filled?: boolean }) =>
   base({ fill: filled ? 'currentColor' : 'none', ...p }, [<path d="M9 3h6l-1 6 4 4v2h-5v6l-1 1-1-1v-6H6v-2l4-4z" />]);
+
+/** The app sigil (same as the home-screen icon), sized in em so it scales with the text beside it. */
+export function AppLogo() {
+  const star = Array.from({ length: 8 }, (_, i) => {
+    const a = ((-90 + i * 45) * Math.PI) / 180;
+    const r = i % 2 === 0 ? 17 : 3.6;
+    return `${(20 + r * Math.cos(a)).toFixed(2)},${(20 + r * Math.sin(a)).toFixed(2)}`;
+  }).join(' ');
+  return (
+    <svg class="app-logo" viewBox="0 0 40 40" aria-hidden="true">
+      <circle cx="20" cy="20" r="18.5" fill="none" stroke="currentColor" stroke-opacity=".55" stroke-width="1.4" />
+      <polygon points={star} fill="currentColor" />
+      <circle cx="20" cy="20" r="2.4" fill="var(--bg)" />
+    </svg>
+  );
+}
