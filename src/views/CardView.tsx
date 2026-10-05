@@ -61,7 +61,7 @@ export function CardView({ slug }: { slug: string }) {
   const printings = card.printings.filter((p, i, all) => all.findIndex((q) => q.set === p.set && q.finish === p.finish && q.product === p.product) === i);
 
   return (
-    <div class="page detail">
+    <div class="page detail card-page">
       <NavBar title={card.name} right={<PinButton pin={{ kind: 'card', key: `/card/${card.slug}`, title: card.name }} />} />
       <div class="card-hero">
         <button type="button" class="hero-img" onClick={() => setViewer({ src: cardImage(card), hi: printingImage(card.img) })} aria-label="View full size">

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'preact/hooks';
-import { CardsIcon, CodexIcon, MoreIcon, RulesIcon, SearchIcon } from './components/Icons';
+import { AppLogo, CardsIcon, CodexIcon, MoreIcon, PinIcon, RulesIcon, SearchIcon } from './components/Icons';
+import { usePins } from './pins';
 import { SheetHost } from './components/Sheet';
 import { applyUpdate, onUpdateAvailable } from './pwa';
-import { type Tab, back, currentRoute, currentTab, isRoot, selectTab } from './router';
+import { type Tab, back, currentRoute, currentTab, isRoot, navigate, selectTab } from './router';
 import { CardView } from './views/CardView';
 import { CardsView } from './views/CardsView';
 import { CodexEntryView, CodexIndexView, FaqView } from './views/CodexView';
@@ -11,11 +12,13 @@ import { NotFound } from './views/NotFound';
 import { RuleView, RulesIndexView } from './views/RulesView';
 import { SearchView } from './views/SearchView';
 
+let searchKey = 0;
+
 function View() {
   const { parts, path } = currentRoute();
   switch (parts[0]) {
     case undefined:
-      return <SearchView />;
+      return <SearchView key={searchKey} />;
     case 'cards':
       return <CardsView />;
     case 'codex':
@@ -55,6 +58,77 @@ function TabBar() {
       ))}
     </nav>
   );
+}
+
+function Sidebar() {
+  const active = currentTab();
+  const { pins } = usePins();
+  const route = currentRoute().path;
+  return (
+    <aside class="sidebar" aria-label="Sections">
+      <a class="sidebar-brand serif" href="#/">
+        <AppLogo />
+        <span>Sorcery Codex</span>
+      </a>
+      <nav class="sidebar-nav">
+        {TABS.map(({ tab, label, Icon }) => (
+          <button key={tab} type="button" class={tab === active ? 'on' : ''} aria-current={tab === active ? 'page' : undefined} onClick={() => selectTab(tab)}>
+            <Icon width={20} height={20} stroke-width={tab === active ? 2.3 : 1.8} />
+            <span>{label}</span>
+            {tab === 'search' && <kbd>/</kbd>}
+          </button>
+        ))}
+      </nav>
+      {pins.length > 0 && (
+        <div class="sidebar-pins">
+          <h2>Pinned</h2>
+          {pins.map((p) =>
+            p.kind === 'query' ? (
+              <a key={`q:${p.key}`} href={`#/?q=${encodeURIComponent(p.key)}`} onClick={(e) => (e.preventDefault(), searchFor(p.key))}>
+                <SearchIcon width={14} height={14} />
+                <span>{p.title}</span>
+              </a>
+            ) : (
+              <a key={p.key} href={`#${p.key}`} class={route === p.key ? 'on' : ''}>
+                <PinIcon width={14} height={14} />
+                <span>{p.title}</span>
+              </a>
+            ),
+          )}
+        </div>
+      )}
+    </aside>
+  );
+}
+
+function searchFor(q: string) {
+  searchKey++;
+  navigate(`/?q=${encodeURIComponent(q)}`, { dir: 'tab' });
+}
+
+function focusSearch() {
+  if (currentRoute().path !== '/') navigate('/', { dir: 'tab' });
+  let tries = 0;
+  const attempt = () => {
+    const input = currentRoute().path === '/' ? (document.querySelector('.search-field input') as HTMLInputElement | null) : null;
+    if (input) input.focus();
+    else if (++tries < 30) setTimeout(attempt, 20);
+  };
+  setTimeout(attempt, 0);
+}
+
+function useSearchShortcut() {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const typing = (e.target as Element).closest?.('input, textarea, select, [contenteditable]');
+      if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !typing)) {
+        e.preventDefault();
+        focusSearch();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 }
 
 const PENDING_KEY = 'update-pending';
@@ -204,8 +278,10 @@ function useEdgeSwipeBack() {
 
 export function App() {
   useEdgeSwipeBack();
+  useSearchShortcut();
   return (
     <>
+      <Sidebar />
       <main class="view">
         <View />
       </main>
