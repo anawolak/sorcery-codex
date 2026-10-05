@@ -215,10 +215,10 @@ export function MoreView() {
           </div>
           <ExternalIcon class="row-chev" width={15} height={15} />
         </a>
-        <a class="row" href="https://sorcerytcg.com/account/decks" target="_blank" rel="noopener">
+        <a class="row" href="https://sorcerytcg.com/profile/cmt88hm6701wh92cygiom0gay" target="_blank" rel="noopener">
           <div class="row-main">
-            <div class="row-title">Your decks</div>
-            <div class="row-sub">sorcerytcg.com/account/decks</div>
+            <div class="row-title">Ana’s decks</div>
+            <div class="row-sub">sorcerytcg.com profile</div>
           </div>
           <ExternalIcon class="row-chev" width={15} height={15} />
         </a>
