@@ -1545,3 +1545,8 @@ mark {
 .toast-steps strong {
   font-size: 15px;
 }
+.visit-count {
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}

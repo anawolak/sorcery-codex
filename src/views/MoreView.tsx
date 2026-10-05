@@ -5,6 +5,7 @@ import { Group } from '../components/Rows';
 import { getStore } from '../data';
 import { downloadAllImages, getOfflineState, type OfflineState, subscribeOffline } from '../offline';
 import { checkForUpdate } from '../pwa';
+import { useVisitTotal } from '../visits';
 
 function useOffline(): OfflineState {
   const [s, set] = useState(getOfflineState);
@@ -53,6 +54,7 @@ export function MoreView() {
   const off = useOffline();
   const [theme, setT] = useState<Theme>(getTheme);
   const [updateMsg, setUpdateMsg] = useState('');
+  const visits = useVisitTotal();
   const pct = off.total ? Math.round((off.done / off.total) * 100) : 0;
 
   const statusText: Record<OfflineState['status'], string> = {
@@ -115,6 +117,19 @@ export function MoreView() {
           </button>
         </div>
       </Group>
+      {visits && (
+        <Group title="Usage">
+          <div class="setting">
+            <div class="setting-main">
+              <strong>Visits</strong>
+              <span class="muted small">
+                {navigator.onLine ? 'Total app opens, all users' : `As of ${new Date(visits.at).toLocaleDateString(undefined, { dateStyle: 'medium' })}`}
+              </span>
+            </div>
+            <b class="visit-count">{visits.count}</b>
+          </div>
+        </Group>
+      )}
       <Group title="Appearance">
         <div class="segments wide">
           {(['system', 'dark', 'light'] as Theme[]).map((t) => (
@@ -149,7 +164,7 @@ export function MoreView() {
         </a>
       </Group>
       <p class="muted small center pad">
-        Unofficial fan-made reference for personal use. Sorcery: Contested Realm, card images and rules text © Erik’s Curiosa Limited. Data refreshes daily.
+        Unofficial fan-made reference for personal use. Sorcery: Contested Realm, card images and rules text © Erik’s Curiosa Limited. Data refreshes daily. App opens are counted anonymously with GoatCounter (no cookies, no personal data).
       </p>
     </div>
   );

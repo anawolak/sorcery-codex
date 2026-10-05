@@ -5,6 +5,7 @@ import { autoDownload } from './offline';
 import { initPwa } from './pwa';
 import { initRouter, onRouteChange } from './router';
 import { initSearch } from './search/engine';
+import { initVisits } from './visits';
 import './styles.css';
 
 const root = document.getElementById('app')!;
@@ -24,6 +25,7 @@ async function boot() {
   render(<App />, root);
   document.documentElement.classList.add('ready');
   autoDownload();
+  initVisits();
 }
 
 boot();
