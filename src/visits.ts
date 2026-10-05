@@ -6,7 +6,7 @@
 import { useEffect, useState } from 'preact/hooks';
 
 /** GoatCounter site code, i.e. the "xyz" in https://xyz.goatcounter.com. Empty disables counting. */
-export const GOATCOUNTER_CODE = '';
+export const GOATCOUNTER_CODE = 'anawolak';
 
 const SESSION_GAP_MS = 30 * 60 * 1000;
 const LAST_KEY = 'visit-last';
