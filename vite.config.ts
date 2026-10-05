@@ -14,7 +14,7 @@ export default defineConfig({
       manifest: {
         id: './',
         name: 'Sorcery Codex',
-        short_name: 'Codex',
+        short_name: 'Sorcery Codex',
         description: 'Offline Sorcery: Contested Realm cards, Codex, rulebook and FAQ.',
         start_url: './',
         scope: './',

@@ -33,7 +33,7 @@ function set(key: string, value: string | null) {
 }
 
 function send() {
-  const url = `${base()}/count?p=${encodeURIComponent('/')}&t=${encodeURIComponent('Sorcery TCG Codex')}&s=${screen.width}&rnd=${Math.random().toString(36).slice(2)}`;
+  const url = `${base()}/count?p=${encodeURIComponent('/')}&t=${encodeURIComponent('Sorcery Codex')}&s=${screen.width}&rnd=${Math.random().toString(36).slice(2)}`;
   return fetch(url, { mode: 'no-cors', cache: 'no-store', keepalive: true }).then(
     () => set(PENDING_KEY, null),
     () => set(PENDING_KEY, '1'),

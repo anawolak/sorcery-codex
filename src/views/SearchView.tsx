@@ -74,7 +74,7 @@ export function SearchView() {
       <div class={`search-head${scrolled || active ? ' scrolled' : ''}${focused || active ? ' compact' : ''}`}>
         <h1 class="serif search-title">
           <AppLogo />
-          <span>Sorcery TCG Codex</span>
+          <span>Sorcery Codex</span>
         </h1>
         <form
           class="searchbar"
