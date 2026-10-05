@@ -5,7 +5,7 @@ import { Group } from '../components/Rows';
 import { getStore } from '../data';
 import { downloadAllImages, getOfflineState, type OfflineState, subscribeOffline } from '../offline';
 import { checkForUpdate } from '../pwa';
-import { useVisitTotal } from '../visits';
+import { COUNTED_HOST, useVisitTotal } from '../visits';
 
 function useOffline(): OfflineState {
   const [s, set] = useState(getOfflineState);
@@ -207,8 +207,25 @@ export function MoreView() {
           <ExternalIcon class="row-chev" width={15} height={15} />
         </a>
       </Group>
+      <Group title="About">
+        <a class="row" href="https://www.anastory.com" target="_blank" rel="noopener">
+          <div class="row-main">
+            <div class="row-title">Made by Ana</div>
+            <div class="row-sub">anastory.com</div>
+          </div>
+          <ExternalIcon class="row-chev" width={15} height={15} />
+        </a>
+        <a class="row" href="https://sorcerytcg.com/account/decks" target="_blank" rel="noopener">
+          <div class="row-main">
+            <div class="row-title">Your decks</div>
+            <div class="row-sub">sorcerytcg.com/account/decks</div>
+          </div>
+          <ExternalIcon class="row-chev" width={15} height={15} />
+        </a>
+      </Group>
       <p class="muted small center pad">
-        Unofficial fan-made reference for personal use. Sorcery: Contested Realm, card images and rules text © Erik’s Curiosa Limited. Data refreshes daily. App opens are counted anonymously with GoatCounter (no cookies, no personal data).
+        Unofficial fan-made reference for personal use. Sorcery: Contested Realm, card images and rules text © Erik’s Curiosa Limited. Data refreshes daily.
+        {location.hostname === COUNTED_HOST && ' App opens are counted anonymously with GoatCounter (no cookies, no personal data).'}
       </p>
     </div>
   );
