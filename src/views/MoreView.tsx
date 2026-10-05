@@ -29,6 +29,32 @@ export function OfflinePill() {
   );
 }
 
+const ACCENTS = [
+  { id: 'gold', label: 'Gold', d: '#d9b56b', l: '#94661a' },
+  { id: 'pink', label: 'Pink', d: '#f48fb8', l: '#c2185b' },
+  { id: 'violet', label: 'Violet', d: '#b39ddb', l: '#6a4bb0' },
+  { id: 'blue', label: 'Blue', d: '#7fb3f0', l: '#2c66b8' },
+  { id: 'teal', label: 'Teal', d: '#5ec8b8', l: '#00796b' },
+  { id: 'green', label: 'Green', d: '#9ccc65', l: '#4a7d1e' },
+  { id: 'coral', label: 'Coral', d: '#f28b6b', l: '#c0442a' },
+] as const;
+
+function getAccent(): string {
+  try {
+    return localStorage.getItem('accent') || 'gold';
+  } catch {
+    return 'gold';
+  }
+}
+function setAccent(id: string) {
+  try {
+    if (id === 'gold') localStorage.removeItem('accent');
+    else localStorage.setItem('accent', id);
+  } catch {}
+  if (id === 'gold') delete document.documentElement.dataset.accent;
+  else document.documentElement.dataset.accent = id;
+}
+
 type Theme = 'system' | 'dark' | 'light';
 function getTheme(): Theme {
   try {
@@ -50,6 +76,7 @@ export function MoreView() {
   const s = getStore();
   const off = useOffline();
   const [theme, setT] = useState<Theme>(getTheme);
+  const [accent, setA] = useState(getAccent);
   const [updateMsg, setUpdateMsg] = useState('');
   const visits = useVisitTotal();
   const pct = off.total ? Math.round((off.done / off.total) * 100) : 0;
@@ -142,6 +169,26 @@ export function MoreView() {
               {t[0].toUpperCase() + t.slice(1)}
             </button>
           ))}
+        </div>
+        <div class="swatch-body">
+          <div class="swatches" role="radiogroup" aria-label="Accent color">
+            {ACCENTS.map((a) => (
+              <button
+                key={a.id}
+                type="button"
+                role="radio"
+                aria-checked={accent === a.id}
+                aria-label={a.label}
+                title={a.label}
+                class={`swatch${accent === a.id ? ' on' : ''}`}
+                style={{ '--sw-d': a.d, '--sw-l': a.l }}
+                onClick={() => {
+                  setAccent(a.id);
+                  setA(a.id);
+                }}
+              />
+            ))}
+          </div>
         </div>
       </Group>
       <Group title="Sources">
