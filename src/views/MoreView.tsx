@@ -120,7 +120,7 @@ export function MoreView() {
             <div class="setting-main">
               <strong>Visits</strong>
               <span class="muted small">
-                {navigator.onLine ? 'Total app opens, all users' : `As of ${new Date(visits.at).toLocaleDateString(undefined, { dateStyle: 'medium' })}`}
+                {navigator.onLine ? 'Visits from all users' : `As of ${new Date(visits.at).toLocaleDateString(undefined, { dateStyle: 'medium' })}`}
               </span>
             </div>
             <b class="visit-count">{visits.count}</b>

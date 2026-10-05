@@ -65,7 +65,7 @@ export function useVisitTotal(): VisitTotal | null {
   });
   useEffect(() => {
     if (!enabled() || !navigator.onLine) return;
-    fetch(`${base()}/counter/TOTAL.json`, { cache: 'no-store' })
+    fetch(`${base()}/counter/${encodeURIComponent('/')}.json`, { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => {
         if (!j?.count) return;
