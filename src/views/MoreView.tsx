@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
-import { ExternalIcon } from '../components/Icons';
+import { ExternalIcon, MailIcon } from '../components/Icons';
 import { LargeTitle } from '../components/NavBar';
 import { Group } from '../components/Rows';
 import { getStore } from '../data';
@@ -208,6 +208,13 @@ export function MoreView() {
             <div class="row-sub">sorcerytcg.com profile</div>
           </div>
           <ExternalIcon class="row-chev" width={15} height={15} />
+        </a>
+        <a class="row" href="mailto:mail@anastory.com?subject=Sorcery%20Codex">
+          <div class="row-main">
+            <div class="row-title">Contact</div>
+            <div class="row-sub">mail@anastory.com</div>
+          </div>
+          <MailIcon class="row-chev" width={15} height={15} />
         </a>
       </Group>
       {visits && (
