@@ -67,15 +67,22 @@ export function useVisitTotal(): VisitTotal | null {
   });
   useEffect(() => {
     if (!enabled() || !navigator.onLine) return;
-    fetch(`${base()}/counter/${encodeURIComponent('/')}.json`, { cache: 'no-store' })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((j) => {
-        if (!j?.count) return;
-        const v = { count: String(j.count), at: new Date().toISOString() };
-        set(TOTAL_KEY, JSON.stringify(v));
-        setTotal(v);
-      })
-      .catch(() => {});
+    const read = (path: string) =>
+      fetch(`${base()}/counter/${encodeURIComponent(path)}.json`, { cache: 'no-store' })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j) => Number(String(j?.count ?? '').replace(/\D/g, '')) || 0)
+        .catch(() => 0);
+    Promise.all([read('/'), read('TOTAL')]).then((counts) => {
+      let prev = 0;
+      try {
+        prev = Number(String(JSON.parse(get(TOTAL_KEY) ?? 'null')?.count ?? '').replace(/\D/g, '')) || 0;
+      } catch {}
+      const n = Math.max(prev, ...counts);
+      if (!n) return;
+      const v = { count: n.toLocaleString('en-US'), at: new Date().toISOString() };
+      set(TOTAL_KEY, JSON.stringify(v));
+      setTotal(v);
+    });
   }, []);
   return enabled() ? total : null;
 }
