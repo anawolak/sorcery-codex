@@ -223,7 +223,7 @@ export function MoreView() {
             <div class="setting-main">
               <strong>Visits</strong>
               <span class="muted small">
-                {navigator.onLine ? 'All-time total · updates every few hours' : `As of ${new Date(visits.at).toLocaleDateString(undefined, { dateStyle: 'medium' })}`}
+                {navigator.onLine ? 'Updates every few hours' : `As of ${new Date(visits.at).toLocaleDateString(undefined, { dateStyle: 'medium' })}`}
               </span>
             </div>
             <b class="visit-count">{visits.count}</b>
