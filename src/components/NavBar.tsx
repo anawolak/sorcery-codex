@@ -1,6 +1,7 @@
 import type { ComponentChildren } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import { back, currentTab } from '../router';
+import { CopyLinkButton } from './CopyLinkButton';
 import { ChevronLeft } from './Icons';
 
 const TAB_LABEL = { search: 'Search', cards: 'Cards', codex: 'Codex', rules: 'Rulebook', more: 'More' } as const;
@@ -25,7 +26,10 @@ export function NavBar({ title, right }: { title: string; right?: ComponentChild
         <span>{TAB_LABEL[currentTab()]}</span>
       </button>
       <div class="nav-title">{title}</div>
-      <div class="nav-right">{right}</div>
+      <div class="nav-right">
+        <CopyLinkButton />
+        {right}
+      </div>
     </header>
   );
 }

@@ -59,3 +59,7 @@ export function AppLogo() {
 }
 
 export const MailIcon = (p: P) => base(p, [<rect x="3" y="5" width="18" height="14" rx="2" />, <path d="m4 7 8 6 8-6" />]);
+
+export const LinkIcon = (p: P) =>
+  base(p, [<path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1" />, <path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1" />]);
+export const CheckIcon = (p: P) => base(p, <path d="m5 12 5 5 9-10" />);

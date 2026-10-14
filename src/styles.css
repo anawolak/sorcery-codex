@@ -1825,3 +1825,29 @@ mark {
     opacity: 0.75;
   }
 }
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+.mini-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--tabbar-h) + 14px);
+  z-index: 45;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  border-radius: 18px;
+  background: var(--bg-elev-2);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  animation: fade-in 0.15s ease;
+}
+@media (min-width: 900px) {
+  .mini-toast {
+    left: calc(var(--sidebar-w) + 50% - var(--sidebar-w) / 2);
+    bottom: 24px;
+  }
+}
