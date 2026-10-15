@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { AppLogo, CloseIcon, ClockIcon, PinIcon, SearchIcon, ShareIcon, SparkIcon } from '../components/Icons';
 import { PinButton } from '../components/PinButton';
+import { WhatsNew } from '../components/WhatsNew';
 import { useScrolled } from '../components/NavBar';
 import { CardRow, CardThumb, FaqItem, Group, Highlight, LinkRow, RuleRow, TermChips } from '../components/Rows';
 import { OfflinePill } from './MoreView';
@@ -218,6 +219,7 @@ function Home({ onPick }: { onPick: (q: string) => void }) {
         <LinkRow href="/codex" title="Codex" sub={`${s.db.codex.length} entries & ${s.db.faqs.length} FAQ`} icon={<span class="pill">X</span>} />
         <LinkRow href="/rules" title="Rulebook" sub={`${s.db.rules.length} sections`} icon={<span class="pill">§</span>} />
       </Group>
+      <WhatsNew />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 import { CHANGELOG, type Release } from '../changelog';
 
 const SEEN_KEY = 'whats-new-seen';
@@ -30,41 +30,35 @@ function unseenReleases(): Release[] {
 }
 
 export function WhatsNew() {
-  const [releases, setReleases] = useState<Release[]>([]);
-  const [closing, setClosing] = useState(false);
-
-  useEffect(() => {
-    const t = setTimeout(() => setReleases(unseenReleases()), 800);
-    return () => clearTimeout(t);
-  }, []);
+  const [releases, setReleases] = useState<Release[]>(unseenReleases);
 
   if (!releases.length) return null;
 
   const close = () => {
     set(SEEN_KEY, CHANGELOG[0].id);
-    setClosing(true);
-    setTimeout(() => setReleases([]), 180);
+    setReleases([]);
   };
 
   return (
-    <div class={`wn-wrap${closing ? ' closing' : ''}`} role="dialog" aria-modal="true" aria-labelledby="wn-title">
-      <div class="wn-backdrop" onClick={close} />
-      <div class="wn-card">
-        <h2 id="wn-title" class="serif">What’s new</h2>
+    <section class="group wn" aria-labelledby="wn-title">
+      <header class="group-head">
+        <h2 id="wn-title">What’s new</h2>
+        <button type="button" class="link-btn" onClick={close}>
+          Got it
+        </button>
+      </header>
+      <div class="group-body wn-body">
         {releases.map((r) => (
-          <section key={r.id}>
-            <span class="eyebrow">{new Date(r.id).toLocaleDateString(undefined, { dateStyle: 'medium' })}</span>
+          <div key={r.id}>
+            <span class="eyebrow">{new Date(r.date).toLocaleDateString(undefined, { dateStyle: 'medium' })}</span>
             <ul>
               {r.items.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
-          </section>
+          </div>
         ))}
-        <button type="button" class="wn-ok" onClick={close}>
-          Got it
-        </button>
       </div>
-    </div>
+    </section>
   );
 }

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'preact/hooks';
 import { AppLogo, CardsIcon, CodexIcon, HomeIcon, MoreIcon, PinIcon, RulesIcon, SearchIcon } from './components/Icons';
 import { usePins } from './pins';
 import { SheetHost } from './components/Sheet';
-import { WhatsNew } from './components/WhatsNew';
 import { applyUpdate, onUpdateAvailable } from './pwa';
 import { type Tab, back, currentRoute, currentTab, isRoot, navigate, selectTab } from './router';
 import { CardView } from './views/CardView';
@@ -289,7 +288,6 @@ export function App() {
       <TabBar />
       <SheetHost />
       <UpdateToast />
-      <WhatsNew />
     </>
   );
 }
