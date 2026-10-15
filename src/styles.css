@@ -1851,3 +1851,65 @@ mark {
     bottom: 24px;
   }
 }
+.wn-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.wn-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  animation: fade-in 0.2s ease;
+}
+.wn-card {
+  position: relative;
+  width: min(340px, 100%);
+  max-height: 80dvh;
+  overflow-y: auto;
+  padding: 20px 20px 16px;
+  border-radius: 18px;
+  background: var(--bg-elev);
+  box-shadow: var(--shadow);
+  animation: zoom-in 0.22s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.wn-wrap.closing {
+  opacity: 0;
+  transition: opacity 0.18s;
+}
+.wn-card h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+.wn-card ul {
+  margin: 6px 0 14px;
+  padding-left: 20px;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.wn-card li {
+  margin-bottom: 6px;
+}
+.wn-card li::marker {
+  color: var(--accent);
+}
+.wn-ok {
+  width: 100%;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 16px;
+  font-weight: 600;
+}
+.wn-ok:active {
+  opacity: 0.8;
+}
+@media (min-width: 900px) {
+  .wn-wrap {
+    padding-left: calc(var(--sidebar-w) + 24px);
+  }
+}

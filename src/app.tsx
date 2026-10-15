@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'preact/hooks';
-import { AppLogo, CardsIcon, CodexIcon, MoreIcon, PinIcon, RulesIcon, SearchIcon } from './components/Icons';
+import { AppLogo, CardsIcon, CodexIcon, HomeIcon, MoreIcon, PinIcon, RulesIcon, SearchIcon } from './components/Icons';
 import { usePins } from './pins';
 import { SheetHost } from './components/Sheet';
+import { WhatsNew } from './components/WhatsNew';
 import { applyUpdate, onUpdateAvailable } from './pwa';
 import { type Tab, back, currentRoute, currentTab, isRoot, navigate, selectTab } from './router';
 import { CardView } from './views/CardView';
@@ -39,7 +40,7 @@ function View() {
 }
 
 const TABS: { tab: Tab; label: string; Icon: typeof SearchIcon }[] = [
-  { tab: 'search', label: 'Search', Icon: SearchIcon },
+  { tab: 'search', label: 'Home', Icon: HomeIcon },
   { tab: 'cards', label: 'Cards', Icon: CardsIcon },
   { tab: 'codex', label: 'Codex', Icon: CodexIcon },
   { tab: 'rules', label: 'Rulebook', Icon: RulesIcon },
@@ -288,6 +289,7 @@ export function App() {
       <TabBar />
       <SheetHost />
       <UpdateToast />
+      <WhatsNew />
     </>
   );
 }

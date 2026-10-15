@@ -4,7 +4,7 @@ import { back, currentTab } from '../router';
 import { CopyLinkButton } from './CopyLinkButton';
 import { ChevronLeft } from './Icons';
 
-const TAB_LABEL = { search: 'Search', cards: 'Cards', codex: 'Codex', rules: 'Rulebook', more: 'More' } as const;
+const TAB_LABEL = { search: 'Home', cards: 'Cards', codex: 'Codex', rules: 'Rulebook', more: 'More' } as const;
 
 export function useScrolled(threshold = 44) {
   const [scrolled, setScrolled] = useState(() => window.scrollY > threshold);
