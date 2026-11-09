@@ -1866,3 +1866,28 @@ mark {
 .wn-body li::marker {
   color: var(--accent);
 }
+.collapsible > summary {
+  list-style: none;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.collapsible > summary::-webkit-details-marker {
+  display: none;
+}
+.collapsible > summary {
+  justify-content: flex-start;
+  gap: 6px;
+  align-items: center;
+}
+.collapsible-chev {
+  color: var(--text-3);
+  transform: rotate(-90deg);
+  transition: transform 0.2s;
+}
+.collapsible[open] .collapsible-chev {
+  transform: none;
+}
+.collapsible[open] > .group-body {
+  animation: fade-in 0.18s ease;
+}

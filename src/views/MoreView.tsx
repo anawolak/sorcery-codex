@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
-import { ExternalIcon, MailIcon } from '../components/Icons';
+import { ChevronDown, ExternalIcon, MailIcon } from '../components/Icons';
 import { LargeTitle } from '../components/NavBar';
 import { Group } from '../components/Rows';
 import { getStore } from '../data';
@@ -218,17 +218,23 @@ export function MoreView() {
         </a>
       </Group>
       {visits && (
-        <Group title="Usage">
-          <div class="setting">
-            <div class="setting-main">
-              <strong>Visits</strong>
-              <span class="muted small">
-                {navigator.onLine ? 'Updates every few hours' : `As of ${new Date(visits.at).toLocaleDateString(undefined, { dateStyle: 'medium' })}`}
-              </span>
+        <details class="group collapsible">
+          <summary class="group-head">
+            <h2>Usage</h2>
+            <ChevronDown class="collapsible-chev" width={18} height={18} />
+          </summary>
+          <div class="group-body">
+            <div class="setting">
+              <div class="setting-main">
+                <strong>Visits</strong>
+                <span class="muted small">
+                  {navigator.onLine ? 'Updates every few hours' : `As of ${new Date(visits.at).toLocaleDateString(undefined, { dateStyle: 'medium' })}`}
+                </span>
+              </div>
+              <b class="visit-count">{visits.count}</b>
             </div>
-            <b class="visit-count">{visits.count}</b>
           </div>
-        </Group>
+        </details>
       )}
       <p class="muted small center pad">
         Unofficial fan-made reference for personal use. Sorcery: Contested Realm, card images and rules text © Erik’s Curiosa Limited. Data refreshes daily.
